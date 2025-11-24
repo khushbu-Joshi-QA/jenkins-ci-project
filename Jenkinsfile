@@ -1,8 +1,11 @@
 pipeline {
     agent any
+environment {
+        JAVA_HOME = "/var/jenkins_home/tools/hudson.model.JDK/JDK17"
+        PATH = "${JAVA_HOME}/bin:${PATH}"
+    }
 
     tools {
-        jdk 'JDK25'
         maven 'Maven'
     }
 
