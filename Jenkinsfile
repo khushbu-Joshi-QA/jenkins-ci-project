@@ -1,9 +1,15 @@
 pipeline {
-    agent any
-tools {
-    jdk 'JDK17'
-    maven 'Maven'
-}
+    agent {
+        docker {
+            image 'selenium/standalone-chrome'
+            args '--privileged'
+        }
+    }
+
+    tools {
+        jdk 'JDK17'
+        maven 'Maven'
+    }
 
     stages {
 
