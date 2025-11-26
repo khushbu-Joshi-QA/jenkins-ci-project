@@ -75,3 +75,30 @@ public class LoginTest {
         );
     }
 }
+
+package com.selenium;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import java.net.URL;
+
+public class LoginTest {
+
+    public static void main(String[] args) throws Exception {
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("--headless=new");
+        options.addArguments("--disable-dev-shm-usage");
+
+        WebDriver driver = new RemoteWebDriver(
+            new URL("http://selenium:4444/wd/hub"),
+            options
+        );
+
+        driver.get("https://google.com");
+        System.out.println(driver.getTitle());
+        driver.quit();
+    }
+}
