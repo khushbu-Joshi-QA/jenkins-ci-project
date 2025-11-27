@@ -12,12 +12,21 @@ public class LoginTest {
     WebDriver driver;
 
     @BeforeMethod
-    public void setup() {
-        //driver = new ChromeDriver();
-        ChromeOptions options = new ChromeOptions();
-        driver = new RemoteWebDriver(new URL("http://selenium:4444/wd/hub"), options);
-        driver.get("https://the-internet.herokuapp.com/login");
-    }
+public void setup() throws MalformedURLException {
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+    options.addArguments("--headless=new");
+
+    driver = new RemoteWebDriver(
+            new URL("http://selenium:4444/wd/hub"),
+            options
+    );
+
+    driver.manage().window().maximize();
+    driver.get("https://the-internet.herokuapp.com/login");
+}
+
 
     @Test
     public void validLoginTest() {
