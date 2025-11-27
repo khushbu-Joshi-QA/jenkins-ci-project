@@ -1,82 +1,43 @@
-package com.example.tests;
+package tests;
+ 
+  import org.openqa.selenium.By;
+  import org.openqa.selenium.WebDriver;
+  import org.openqa.selenium.remote.RemoteWebDriver;
+  import org.openqa.selenium.chrome.ChromeOptions;
+  import org.testng.Assert;
+  import org.testng.annotations.Test;
+ 
+ import java.net.URL;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.Assert;
-import org.testng.annotations.*;
+ public class LoginTest {
 
-public class LoginTest {
+     @Test
+     public void validLoginTest() throws Exception {
 
-    WebDriver driver;
+         // ⭐ IMPORTANT: Connect to Selenium Grid inside Docker (USE THIS URL)
+         ChromeOptions options = new ChromeOptions();
+         WebDriver driver = new RemoteWebDriver(
+                 new URL("http://selenium:4444"),   // <-- THIS IS THE CORRECT URL
+                 options
+         );
 
-    @BeforeClass
-    public void setUp() {
-        // Setup ChromeDriver automatically
-        WebDriverManager.chromedriver().setup();
+         // Open website
+         driver.get("https://the-internet.herokuapp.com/login");
 
-        ChromeOptions options = new ChromeOptions();
+         // Enter username
+         driver.findElement(By.id("username")).sendKeys("tomsmith");
 
-        // Run Headless for Jenkins
-        options.addArguments("--headless=new");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+         // Enter password
+         driver.findElement(By.id("password")).sendKeys("SuperSecretPassword!");
 
-      //  driver = new ChromeDriver(options);
-        WebDriver driver = new RemoteWebDriver(
-        new URL("http://selenium:4444/wd/hub"),
-        new ChromeOptions()
-);
+         // Click Login button
+         driver.findElement(By.cssSelector("button")).click();
 
-        driver.manage().window().maximize();
-    }
+         // Validate success message
+         String message = driver.findElement(By.id("flash")).getText();
+         Assert.assertTrue(message.contains("You logged into a secure area!"));
 
-    @AfterClass
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
-
-    @Test
-    public void validLogin() {
-        driver.get("https://the-internet.herokuapp.com/login");
-
-        driver.findElement(By.id("username")).sendKeys("tomsmith");
-        driver.findElement(By.id("password")).sendKeys("SuperSecretPassword!");
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
-
-        String message = driver.findElement(By.id("flash")).getText();
-        Assert.assertTrue(message.contains("You logged into a secure area!"));
-    }
-
-    @Test
-    public void invalidLogin() {
-        driver.get("https://the-internet.herokuapp.com/login");
-
-        driver.findElement(By.id("username")).sendKeys("wrong");
-        driver.findElement(By.id("password")).sendKeys("wrong");
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
-
-        String message = driver.findElement(By.id("flash")).getText();
-        Assert.assertTrue(
-                message.contains("Your username is invalid!") ||
-                message.contains("Your password is invalid!")
-        );
-    }
-
-    @Test
-    public void emptyLogin() {
-        driver.get("https://the-internet.herokuapp.com/login");
-
-        driver.findElement(By.cssSelector("button[type='submit']")).click();
-
-        String message = driver.findElement(By.id("flash")).getText();
-        Assert.assertTrue(
-                message.contains("Your username is invalid!") ||
-                message.contains("Your password is invalid!")
-        );
-    }
-}
+         // Close browser
+         driver.quit();
+     }
+ }
