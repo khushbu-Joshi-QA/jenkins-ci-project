@@ -1,15 +1,6 @@
 pipeline {
     agent any
 
-    stages {
-
-        stage('Checkout Code') {
-            steps {
-                echo "Cloning GitHub repository..."
-                git 'https://github.com/khushbu-Joshi-QA/jenkins-ci-project'
-            }
-        }
-
         stage('Build Project') {
             steps {
                 echo "Running Maven build..."
