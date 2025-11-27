@@ -1,43 +1,51 @@
-package tests;
- 
-  import org.openqa.selenium.By;
-  import org.openqa.selenium.WebDriver;
-  import org.openqa.selenium.remote.RemoteWebDriver;
-  import org.openqa.selenium.chrome.ChromeOptions;
-  import org.testng.Assert;
-  import org.testng.annotations.Test;
- 
- import java.net.URL;
+package com.assignment.tests;
 
- public class LoginTest {
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.*;
 
-     @Test
-     public void validLoginTest() throws Exception {
+public class LoginTest {
 
-         // ⭐ IMPORTANT: Connect to Selenium Grid inside Docker (USE THIS URL)
-         ChromeOptions options = new ChromeOptions();
-         WebDriver driver = new RemoteWebDriver(
-                 new URL("http://selenium:4444"),   // <-- THIS IS THE CORRECT URL
-                 options
-         );
+    WebDriver driver;
 
-         // Open website
-         driver.get("https://the-internet.herokuapp.com/login");
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.get("https://the-internet.herokuapp.com/login");
+    }
 
-         // Enter username
-         driver.findElement(By.id("username")).sendKeys("tomsmith");
+    @Test
+    public void validLoginTest() {
+        driver.findElement(By.id("username")).sendKeys("tomsmith");
+        driver.findElement(By.id("password")).sendKeys("SuperSecretPassword!");
+        driver.findElement(By.cssSelector("button")).click();
 
-         // Enter password
-         driver.findElement(By.id("password")).sendKeys("SuperSecretPassword!");
+        WebElement success = driver.findElement(By.cssSelector(".flash.success"));
+        Assert.assertTrue(success.isDisplayed());
+    }
 
-         // Click Login button
-         driver.findElement(By.cssSelector("button")).click();
+    @Test
+    public void invalidLoginTest() {
+        driver.findElement(By.id("username")).sendKeys("wrong");
+        driver.findElement(By.id("password")).sendKeys("wrong");
+        driver.findElement(By.cssSelector("button")).click();
 
-         // Validate success message
-         String message = driver.findElement(By.id("flash")).getText();
-         Assert.assertTrue(message.contains("You logged into a secure area!"));
+        WebElement error = driver.findElement(By.cssSelector(".flash.error"));
+        Assert.assertTrue(error.isDisplayed());
+    }
 
-         // Close browser
-         driver.quit();
-     }
- }
+    @Test
+    public void emptyFieldsTest() {
+        driver.findElement(By.cssSelector("button")).click();
+        WebElement error = driver.findElement(By.cssSelector(".flash.error"));
+        Assert.assertTrue(error.isDisplayed());
+    }
+
+    @AfterMethod
+    public void teardown() {
+        driver.quit();
+    }
+}
