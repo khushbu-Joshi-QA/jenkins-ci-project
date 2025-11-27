@@ -18,6 +18,11 @@ pipeline {
         stage('Publish Reports') {
             steps {
                 junit '**/target/surefire-reports/*.xml'
+                publishHTML([
+                    reportName: 'TestNG HTML Report',
+                    reportDir : 'test-output',
+                    reportFiles: 'index.html'
+                ])
             }
         }
     }
