@@ -13,7 +13,9 @@ public class LoginTest {
 
     @BeforeMethod
     public void setup() {
-        driver = new ChromeDriver();
+        //driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        driver = new RemoteWebDriver(new URL("http://selenium:4444/wd/hub"), options);
         driver.get("https://the-internet.herokuapp.com/login");
     }
 
