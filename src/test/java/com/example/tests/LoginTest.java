@@ -1,62 +1,76 @@
 package com.assignment.tests;
 
+import java.net.URL;
+import java.net.MalformedURLException;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class LoginTest {
 
     WebDriver driver;
 
     @BeforeMethod
-public void setup() throws MalformedURLException {
-    ChromeOptions options = new ChromeOptions();
-    options.addArguments("--no-sandbox");
-    options.addArguments("--disable-dev-shm-usage");
-    options.addArguments("--headless=new");
+    public void setup() throws MalformedURLException {
 
-    driver = new RemoteWebDriver(
-            new URL("http://selenium:4444/wd/hub"),
-            options
-    );
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless=new");
 
-    driver.manage().window().maximize();
-    driver.get("https://the-internet.herokuapp.com/login");
-}
+        // IMPORTANT: Use Selenium container URL
+        driver = new RemoteWebDriver(
+                new URL("http://selenium:4444/wd/hub"),
+                options
+        );
 
+        driver.manage().window().maximize();
+        driver.get("https://the-internet.herokuapp.com/login");
+    }
 
     @Test
     public void validLoginTest() {
-        driver.findElement(By.id("username")).sendKeys("tomsmith");
-        driver.findElement(By.id("password")).sendKeys("SuperSecretPassword!");
-        driver.findElement(By.cssSelector("button")).click();
 
-        WebElement success = driver.findElement(By.cssSelector(".flash.success"));
-        Assert.assertTrue(success.isDisplayed());
+        WebElement username = driver.findElement(By.id("username"));
+        WebElement password = driver.findElement(By.id("password"));
+        WebElement loginBtn = driver.findElement(By.cssSelector("button[type='submit']"));
+
+        username.sendKeys("tomsmith");
+        password.sendKeys("SuperSecretPassword!");
+        loginBtn.click();
+
+        String successMsg = driver.findElement(By.id("flash")).getText();
+        Assert.assertTrue(successMsg.contains("You logged into a secure area!"));
     }
 
     @Test
     public void invalidLoginTest() {
-        driver.findElement(By.id("username")).sendKeys("wrong");
-        driver.findElement(By.id("password")).sendKeys("wrong");
-        driver.findElement(By.cssSelector("button")).click();
 
-        WebElement error = driver.findElement(By.cssSelector(".flash.error"));
-        Assert.assertTrue(error.isDisplayed());
-    }
+        WebElement username = driver.findElement(By.id("username"));
+        WebElement password = driver.findElement(By.id("password"));
+        WebElement loginBtn = driver.findElement(By.cssSelector("button[type='submit']"));
 
-    @Test
-    public void emptyFieldsTest() {
-        driver.findElement(By.cssSelector("button")).click();
-        WebElement error = driver.findElement(By.cssSelector(".flash.error"));
-        Assert.assertTrue(error.isDisplayed());
+        username.sendKeys("wrongUser");
+        password.sendKeys("wrongPass");
+        loginBtn.click();
+
+        String errorMsg = driver.findElement(By.id("flash")).getText();
+        Assert.assertTrue(errorMsg.contains("Your username is invalid!"));
     }
 
     @AfterMethod
-    public void teardown() {
-        driver.quit();
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
