@@ -1,67 +1,34 @@
 pipeline {
-    agent {
-        docker {
-            image 'selenium/standalone-chrome'
-            args '--privileged'
-        }
-    }
-
-    tools {
-        jdk 'JDK17'
-        maven 'Maven'
-    }
+    agent any
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                checkout scm
+                echo "Cloning GitHub repository..."
+                git 'https://github.com/khushbu-Joshi-QA/jenkins-ci-project'
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build Project') {
             steps {
-                sh 'mvn -B clean package'
+                echo "Running Maven build..."
+                sh 'mvn clean install -DskipTests'
             }
         }
 
-        stage('Run Selenium Tests (TestNG)') {
+        stage('Run Selenium Tests') {
             steps {
+                echo "Running Selenium Tests on Docker Grid..."
                 sh 'mvn test'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
         }
 
-        stage('Run Postman Tests (Newman)') {
+        stage('Publish Reports') {
             steps {
-                sh '''
-                    newman run postman/reqres-login-collection.json \
-                    --reporters cli,junit \
-                    --reporter-junit-export newman-results.xml
-                '''
+                echo "Publishing Test Reports..."
+                junit '**/target/surefire-reports/*.xml'
             }
-            post {
-                always {
-                    junit 'newman-results.xml'
-                }
-            }
-        }
-
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: '**/target/**/*.xml, newman-results.xml', fingerprint: true
-        }
-        success {
-            echo 'Pipeline SUCCESS!'
-        }
-        failure {
-            echo 'Pipeline FAILED!'
         }
     }
 }
