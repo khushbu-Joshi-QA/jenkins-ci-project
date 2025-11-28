@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-
+        
         stage('Build Project') {
             steps {
                 sh 'mvn clean install -DskipTests'
@@ -15,15 +15,23 @@ pipeline {
             }
         }
 
-        stage('Publish Reports') {
+        stage('Publish JUnit Reports') {
             steps {
                 junit '**/target/surefire-reports/*.xml'
-                publishHTML([
-                    reportName: 'TestNG HTML Report',
-                    reportDir : 'test-output',
-                    reportFiles: 'index.html'
-                ])
             }
+        }
+    }
+
+    post {
+        always {
+            publishHTML(target: [
+                reportDir: 'test-output',
+                reportFiles: 'index.html',
+                reportName: 'TestNG Report',
+                keepAll: true,
+                alwaysLinkToLastBuild: true,
+                allowMissing: true
+            ])
         }
     }
 }
