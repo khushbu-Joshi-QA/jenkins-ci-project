@@ -17,7 +17,7 @@ pipeline {
 
         stage('Publish JUnit Reports') {
             steps {
-                junit '**/target/surefire-reports/*.xml'
+                junit 'target/surefire-reports/*.xml'
             }
         }
     }
@@ -25,12 +25,12 @@ pipeline {
     post {
         always {
             publishHTML(target: [
-                reportDir: 'test-output',
-                reportFiles: 'index.html',
-                reportName: 'TestNG Report',
                 allowMissing: true,
                 alwaysLinkToLastBuild: true,
-                keepAll: true
+                keepAll: true,
+                reportDir: 'test-output',
+                reportFiles: 'index.html',
+                reportName: 'TestNG Report'
             ])
         }
     }
