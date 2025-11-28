@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        
+
         stage('Build Project') {
             steps {
                 sh 'mvn clean install -DskipTests'
@@ -28,9 +28,9 @@ pipeline {
                 reportDir: 'test-output',
                 reportFiles: 'index.html',
                 reportName: 'TestNG Report',
-                keepAll: true,
+                allowMissing: true,
                 alwaysLinkToLastBuild: true,
-                allowMissing: true
+                keepAll: true
             ])
         }
     }
