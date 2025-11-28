@@ -8,7 +8,7 @@
 
     <test name="Login Tests">
         <classes>
-            <class name="com.assignment.tests.LoginTest"/>
+            <class name="tests.LoginTest"/>
         </classes>
     </test>
 
