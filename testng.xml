@@ -2,13 +2,13 @@
 <suite name="Automation Suite">
 
     <listeners>
-        <listener class-name="org.testng.reporters.EmailableReporter" />
-        <listener class-name="org.testng.reporters.XMLReporter" />
+        <listener class-name="org.testng.reporters.EmailableReporter"/>
+        <listener class-name="org.testng.reporters.XMLReporter"/>
     </listeners>
 
     <test name="Login Tests">
         <classes>
-            <class name="com.assignment.tests.LoginTest" />
+            <class name="com.assignment.tests.LoginTest"/>
         </classes>
     </test>
 
