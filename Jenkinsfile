@@ -23,15 +23,15 @@ pipeline {
     }
 
     post {
-        always {
-            publishHTML(target: [
-                allowMissing: true,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'test-output',
-                reportFiles: 'index.html',
-                reportName: 'TestNG Report'
-            ])
-        }
+    always {
+        publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'target/surefire-reports',
+            reportFiles: 'index.html',
+            reportName: 'TestNG HTML Report'
+        ])
     }
+}
 }
